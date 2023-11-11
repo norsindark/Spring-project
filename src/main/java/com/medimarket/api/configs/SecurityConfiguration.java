@@ -21,6 +21,13 @@ public class SecurityConfiguration {
     public static final String[] UN_SECRET_URLS = {
             "/api/auth/**"
     };
+    public static final String[] ADMIN_SECRET_URLS = {
+            "/api/home/updateInfo/{id}"
+    };
+
+    public static final String[] USER_SECRET_URLS = {
+            "/api/home/profile"
+    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -29,6 +36,10 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((reqs) -> reqs
                         .requestMatchers(UN_SECRET_URLS)
                         .permitAll()
+                        .requestMatchers(ADMIN_SECRET_URLS)
+                        .hasAuthority("USER")
+//                        .requestMatchers(USER_SECRET_URLS)
+//                        .hasAuthority("USER")
                         .anyRequest()
                         .authenticated())
                 .sessionManagement((reqs) -> reqs

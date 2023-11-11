@@ -1,6 +1,8 @@
 package com.medimarket.api.advice;
 
+import com.medimarket.api.exceptions.CustomerTokenException;
 import com.medimarket.api.exceptions.UserLoginException;
+import com.medimarket.api.exceptions.UserNotFoundException;
 import com.medimarket.api.exceptions.UserRegistrationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,6 +37,22 @@ public class ApplicationExceptionHandle {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserLoginException.class)
     public Map<String ,String > handleBusinessException(UserLoginException e) {
+        Map<String ,String > errorMap = new HashMap<>();
+        errorMap.put("error", e.getMessage());
+        return errorMap;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserNotFoundException.class)
+    public Map<String ,String > handleBusinessException(UserNotFoundException e) {
+        Map<String ,String > errorMap = new HashMap<>();
+        errorMap.put("error", e.getMessage());
+        return errorMap;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CustomerTokenException.class)
+    public Map<String ,String > handleBusinessException(CustomerTokenException e) {
         Map<String ,String > errorMap = new HashMap<>();
         errorMap.put("error", e.getMessage());
         return errorMap;

@@ -1,5 +1,7 @@
 package com.medimarket.api.users;
 
+//import com.medimarket.api.advice.UniqueEmail;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -15,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class UserDto {
 
     @NotBlank(message = "Username can't be empty")
+    @Column(unique = true)
     private String username;
 
     @NotBlank(message = "password can't be empty")
@@ -22,13 +25,16 @@ public class UserDto {
     private String password;
 
     @Email
+    @Column(unique = true)
+//    @UniqueEmail
     @NotBlank(message = "email can't be empty")
     private String email;
 
     @NotBlank(message = "name can't be empty")
     private String name;
 
-//    private Boolean enabled;
+    private Boolean enabled;
+
 
     @NotBlank(message = "address can't be empty")
     private String address;
@@ -36,6 +42,4 @@ public class UserDto {
     @NotBlank(message = "phone number can't be empty")
     private String phone;
 
-//    private Date created_at;
-//    private Date updated_at;
 }
