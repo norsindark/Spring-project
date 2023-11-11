@@ -44,21 +44,10 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String phone;
 
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private Date created_at;
-//
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private Date updated_at;
-//
-//    @PrePersist
-//    protected void onCreate() {
-//        created_at = new Date();
-//    }
-//
-//    @PreUpdate
-//    protected void onUpdate() {
-//        updated_at = new Date();
-//    }
+    @Column(name = "verification_token", length = 64)
+    private String verificationToken;
+
+    private Boolean enabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -89,9 +78,6 @@ public class User implements UserDetails {
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
     @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    public boolean isEnabled() {return enabled;}
 }
