@@ -20,7 +20,7 @@ import java.util.List;
 @Builder
 public class User implements UserDetails {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @Column(nullable = false, unique = true)
@@ -43,9 +43,6 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String phone;
-
-    @Column(name = "verification_token", length = 64)
-    private String verificationToken;
 
     private Boolean enabled;
 
