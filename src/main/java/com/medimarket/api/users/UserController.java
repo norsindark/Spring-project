@@ -4,6 +4,7 @@ import com.medimarket.api.customer.EmailDto;
 import com.medimarket.api.exceptions.UserNotFoundException;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +35,4 @@ public class UserController {
     public ResponseEntity<User> updateUserInfo(@Valid @RequestBody UserDto userDto, @PathVariable int id) {
         return ResponseEntity.ok(this.userService.updateUserInfo(id,userDto));
     }
-
-
-
-
 }

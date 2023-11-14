@@ -35,7 +35,6 @@ public class UserDto {
 
     private Boolean enabled;
 
-
     @NotBlank(message = "address can't be empty")
     private String address;
 

@@ -1,6 +1,7 @@
 package com.medimarket.api.auths;
 
 import com.medimarket.api.configs.JwtService;
+
 import com.medimarket.api.customer.CustomerRepository;
 import com.medimarket.api.customer.CustomerToken;
 import com.medimarket.api.exceptions.CustomerTokenException;
@@ -43,6 +44,7 @@ public class AuthenticationService {
     private static final int EXPIRATION = 60*24;
 
     public AuthenticationResponse register(UserDto userDto, String siteURL)
+
             throws UserRegistrationException, MessagingException, UnsupportedEncodingException {
         Optional<User> exitsUsername = this.userRepository.findByUsername(userDto.getUsername());
         Optional<User> exitsEmail = this.userRepository.findByEmail(userDto.getEmail());
@@ -53,7 +55,9 @@ public class AuthenticationService {
             throw new UserRegistrationException(userDto.getEmail() + " already exits");
         }
 
+
         String randomToken = UUID.randomUUID().toString();
+
 
         User _user = User.builder()
                 .username(userDto.getUsername())
@@ -63,6 +67,7 @@ public class AuthenticationService {
                 .phone(userDto.getPhone())
                 .address(userDto.getAddress())
                 .role(Role.USER)
+
                 .enabled(false)
                 .build();
         this.userRepository.save(_user);
@@ -72,6 +77,7 @@ public class AuthenticationService {
         sendVerificationEmail(_user,randomToken, siteURL);
 
         return AuthenticationResponse.builder()
+
                 .token(token)
                 .build();
     }
@@ -185,5 +191,56 @@ public class AuthenticationService {
         cal.setTime(new Date());
         cal.add(Calendar.MINUTE, expiryTimeInMinutes);
         return new Date(cal.getTime().getTime());
+    }
+
+    private void sendVerificationEmail(User user, String siteUrl)
+            throws MessagingException, UnsupportedEncodingException {
+        String toAddress = user.getEmail();
+        String fromAddress = "dvan78281@gmail.com";
+        String senderName = "Medicine Market";
+        String subject = "Please verify your email";
+        String content = "Dear [[name]],<br>"
+                + "Please click the link below to verify your registration:<br>"
+                + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
+                + "Thank you,<br>"
+                + "SinD.";
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom(fromAddress, senderName);
+        helper.setTo(toAddress);
+        helper.setSubject(subject);
+        content = content.replace("[[name]]", user.getName());
+        String verifyUrl = UriComponentsBuilder.fromUriString(siteUrl)
+                .path("/verify")
+                .queryParam("token", user.getVerificationToken())
+                .build().toUriString();
+        content = content.replace("[[URL]]", verifyUrl);
+        helper.setText(content, true);
+        javaMailSender.send(message);
+    }
+
+    public boolean verify(String token) {
+        User user = this.userRepository.findByVerificationToken(token);
+        if (user == null || user.isEnabled()) {
+            return false;
+        } else {
+            user.setVerificationToken(null);
+            user.setEnabled(true);
+            this.userRepository.save(user);
+        }
+        return true;
+    }
+
+    public void resendVerifyEmail(VerifyRequest request, String siteUrl)
+            throws UserNotFoundException, MessagingException, UnsupportedEncodingException {
+        Optional<User> user = this.userRepository.findByEmail(request.getEmail());
+        if (user.isPresent()) {
+            User _user = user.get();
+            _user.setVerificationToken(RandomStringUtils.randomAlphanumeric(64));
+            sendVerificationEmail(_user, siteUrl);
+        } else {
+            throw new UserNotFoundException("User not found with: " + request.getEmail());
+        }
     }
 }

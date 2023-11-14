@@ -13,6 +13,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -56,7 +57,6 @@ public class UserService {
 
         return _user;
     }
-
     public void resetPassword(EmailDto email, String siteUrl)
             throws UserNotFoundException, MessagingException, UnsupportedEncodingException, CustomerTokenException {
         Optional<User> user = this.userRepository.findByEmail(email.getEmail());
